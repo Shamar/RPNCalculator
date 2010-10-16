@@ -2,7 +2,7 @@
 --
 -- Module      :  Computation
 -- Copyright   :  Giacomo Tesio
--- License     :  AllRightsReserved
+-- License     :  GNU General Public License Version 3
 --
 -- Maintainer  :  Giacomo Tesio
 -- Stability   :
@@ -49,7 +49,7 @@ data Computation a =
 value x = Value x
 binary f = Function $ \x -> unary $ (flip f) x
 unary  f = Function (\x -> Value $ f x)
-parseError e = Error e
+parseError = Error
 
 instance (Show a) => Show (Computation a) where
     show Empty = "Empty"
@@ -65,13 +65,15 @@ evaluateExpression parse (Expression result (x:xs))
     | otherwise = evaluateExpression parse $ Expression (apply result $ current nextExp) $ rest nextExp
     where nextExp = evaluateExpression parse $ Expression (parse x) xs
 
-apply :: Computation a -> Computation a -> Computation a
+apply :: (Show a) => Computation a -> Computation a -> Computation a
 apply Empty (Value x) = Value x
 apply Empty (Function f)  = parseError "Too few arguments."
+apply Empty (Error e)  = (Error e)
 apply (Value x) (Value y) = parseError "Too many arguments."
 apply (Value x) (Function f) = f x
 apply (Function f) (Function g)  = parseError "Too many functions."
 apply (Error e) _ = Error e
+apply x y = parseError $ "Can not apply " ++ show x ++ " to " ++ show y ++ "."
 
 compute :: Computation a -> Either String a
 compute (Value x) = (Right x)

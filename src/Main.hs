@@ -2,7 +2,7 @@
 --
 -- Module      :  Main
 -- Copyright   :  Giacomo Tesio
--- License     :  AllRightsReserved
+-- License     :  GNU General Public License Version 3
 --
 -- Maintainer  :  Giacomo Tesio
 -- Stability   :
@@ -20,12 +20,13 @@ import System.Environment( getArgs )
 import Data.Maybe (isNothing)
 import Computation
 
-
 main = do
   args <- getArgs
-  print $ show $ evaluate (floatingRPN) args
+  putStrLn $ format $ evaluate (floatingRPN) args
 
-calculate = evaluate floatingRPN
+format :: (Show a) => Either String a -> String
+format (Left e) = e
+format (Right result) = show result
 
 floatingRPN :: (Floating a, Read a) => String -> Computation a
 floatingRPN "+" = binary (+)

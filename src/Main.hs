@@ -23,12 +23,9 @@ import Computation
 
 main = do
   args <- getArgs
-  let result = evaluate (floatingRPN) (words "5")
-  print $ show $ result
-
+  print $ show $ evaluate (floatingRPN) args
 
 calculate = evaluate floatingRPN
-
 
 floatingRPN :: (Floating a, Read a) => String -> Computation a
 floatingRPN "+" = binary (+)
